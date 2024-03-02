@@ -1,0 +1,69 @@
+<a name="recipe-top-anchor" id="recipe-top-anchor"></a>
+<ng-container *ngIf="recipe != undefined; else loadingTemplate">
+    <button type="button" (click)="onShare()" *ngIf="recipe.socials.sharing.publication.isPublished.external"
+        class="btn btn-sm text-nowrap btn-unselected mobile float-end ms-2">
+        <app-icon [icon]="shareIcon" [fixedWidth]="true"></app-icon>
+    </button>
+    <app-h3 [title]="recipe.name" [busy]="loading"></app-h3>
+    <p class="text-muted">{{recipe.description}}</p>
+    <ng-container
+        *ngIf="!(recipe!.socials.sharing.publication.isPublished.external || recipe!.socials.sharing.publication.isPublished.internal)">
+        <app-customizable-alert *ngIf="isOwner" [style]="'warning'">
+            <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between">
+                <div class="d-flex align-items-center">
+                    <app-icon [icon]="infoIcon" [marginEnd]="3" [addCss]="'fs-4'"></app-icon>
+                    {{l10n.locale.views.recipe.warningNotPublished}}
+                </div>
+                <div class="ms-lg-3 mt-3 mt-lg-3">
+                    <button type="button" class="btn btn-sm btn-medium-green text-nowrap ms-2" [disabled]="publishBusy"
+                        (click)="onPublishRecipe()">
+                        <app-icon icon="fas fa-lock" [marginEnd]="1" *ngIf="!publishBusy"></app-icon>
+                        <app-icon [icon]="spinnerIcon" [marginEnd]="1" *ngIf="publishBusy"></app-icon>
+                        {{l10n.locale.views.recipe.manage.publicVisbility.shareWithUsersBtn}}
+                    </button>
+                </div>
+            </div>
+        </app-customizable-alert>
+        <app-alert *ngIf="isAdmin && !isOwner" [message]="l10n.locale.views.recipe.warningNotPublishedForAdmin"
+            [style]="'danger'" [icon]="infoIcon"></app-alert>
+    </ng-container>
+    <div class="row">
+        <div class="col col-12 col-lg-6 order-1 order-lg-0">
+            <app-recipe-header [recipe]="recipe" [loading]="loading"></app-recipe-header>
+            <hr class="my-4" />
+            <app-recipe-ingredients [recipe]="recipe" [loading]="loading"
+                (servingsChanged)="inputServingsCount = $event"></app-recipe-ingredients>
+            <ng-container *ngIf="recipe.preparation.timeConsumed.total > 0">
+                <hr class="my-4" />
+                <app-recipe-timeconsumption [recipe]="recipe" [loading]="loading"></app-recipe-timeconsumption>
+            </ng-container>
+            <hr class="my-4" />
+            <app-recipe-steps [recipe]="recipe" [inputServingsCount]="inputServingsCount"></app-recipe-steps>
+        </div>
+        <div class="col col-12 col-lg-6 order-0 order-lg-1">
+            <app-recipe-pictures [recipe]="recipe" [loading]="loading" [isAdmin]="isAdmin" [isOwner]="isOwner"
+                [userId]="user?.id" (imageDeleted)="onEntityChanged()"
+                (imageUploaded)="onEntityChanged()"></app-recipe-pictures>
+            <app-recipe-voting class="d-none d-lg-block" *ngIf="user != undefined" [recipe]="recipe"
+                [loading]="loading"></app-recipe-voting>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col col-12 col-lg-6">
+            <app-recipe-voting class="d-block d-lg-none" *ngIf="user != undefined" [recipe]="recipe"
+                [loading]="loading"></app-recipe-voting>
+            <app-recipe-manage *ngIf="user != undefined" [recipe]="recipe" [loading]="loading"
+                (entityChanged)="onEntityChanged()"></app-recipe-manage>
+        </div>
+    </div>
+    <app-recipe-mobile-shortcuts [recipe]="recipe" [loading]="loading"></app-recipe-mobile-shortcuts>
+</ng-container>
+
+<ng-template #loadingTemplate>
+    <div class="container px-0">
+        <app-h3 [title]="l10n.locale.views.recipe.pageloading" [busy]="loading"></app-h3>
+    </div>
+</ng-template>
+
+<app-recipe-voting-modals *ngIf="user != undefined" [recipe]="recipe" [loading]="loading"
+    (entityChanged)="onEntityChanged()"></app-recipe-voting-modals>

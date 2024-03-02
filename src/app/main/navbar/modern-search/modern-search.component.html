@@ -1,0 +1,72 @@
+<div class="backdrop" (click)="onLeaveSearch.emit()">
+    <div class="corset">
+        <div class="card shadow" (click)="$event.stopPropagation()">
+            <div class="card-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h4 class="card-title my-2 text-truncate">
+                        {{l10n.locale.views.search.title}} <span class="text-dark-green">{{phrase}}</span>
+                    </h4>
+                    <app-icon [ngClass]="{ 'text-dark-green': settingsOpen }" [icon]="userSettingsIcon"
+                        (click)="settingsOpen = !settingsOpen" [marginStart]="3"></app-icon>
+                </div>
+            </div>
+            <div class="card-body pt-0 pb-2 border-bottom" *ngIf="settingsOpen">
+                <h4 class="card-title my-2">
+                    {{l10n.locale.views.search.topics.title}}:
+                </h4>
+                <button type="button"
+                    [ngClass]="{ 'btn me-2 mb-2': true, 'btn-medium-green': searchSectionRecipes, 'btn-unselected': !searchSectionRecipes, 'mobile': isMobile }"
+                    (click)="searchSectionRecipes = !searchSectionRecipes" (click)="onChangeFilter()">
+                    {{l10n.locale.views.search.topics.recipes}}
+                </button>
+                <button type="button"
+                    [ngClass]="{ 'btn me-2 mb-2': true, 'btn-medium-green': searchSectionIngredients, 'btn-unselected': !searchSectionIngredients, 'mobile': isMobile }"
+                    (click)="searchSectionIngredients = !searchSectionIngredients" (click)="onChangeFilter()">
+                    {{l10n.locale.views.search.topics.ingredients}}
+                </button>
+                <button type="button"
+                    [ngClass]="{ 'btn me-2 mb-2': true, 'btn-medium-green': searchSectionUser, 'btn-unselected': !searchSectionUser, 'mobile': isMobile }"
+                    (click)="searchSectionUser = !searchSectionUser" (click)="onChangeFilter()">
+                    {{l10n.locale.views.search.topics.user}}
+                </button>
+            </div>
+            <div *ngIf="searchBusy" class="card-body pt-2">
+                <h4 class="card-title my-2">
+                    <app-icon [icon]="spinnerIcon" class="text-light-green" [spin]="true" [marginEnd]="2" />
+                    {{l10n.locale.views.search.searchBusy}}
+                </h4>
+            </div>
+            <ul class="list-group list-group-flush" *ngIf="!searchBusy && searchCompleted">
+                <li *ngIf="searchResults.user.length > 0" class="list-group-item bg-light">
+                    <strong>{{ln(l10n.locale.views.search.userFound, [searchResults.user.length])}}</strong>
+                </li>
+                <a *ngFor="let user of searchResults.user"
+                    [routerLink]="['/recipes', 'user', user.id + '-' + (user.meta.fn != '' ? user.meta.fn : user.name)]"
+                    (click)="onLeaveSearch.emit()" class="list-group-item">
+                    <app-icon [icon]="userIcon" [marginEnd]="2" />
+                    {{ln(l10n.locale.views.search.userResult, [user.meta.fn != '' ? user.meta.fn : user.name,
+                    user.statistics.recipes.created])}}
+                </a>
+                <li *ngIf="searchResults.recipes.length > 0" class="list-group-item bg-light">
+                    <strong>{{ln(searchResults.recipes.length == 1 ? l10n.locale.views.search.recipeFound :
+                        l10n.locale.views.search.recipesFound, [searchResults.recipes.length])}}</strong>
+                </li>
+                <a *ngFor="let recipe of searchResults.recipes" [routerLink]="['/recipe', recipe.id]"
+                    (click)="onLeaveSearch.emit()" class="list-group-item d-flex align-items-center">
+                    <div style="width: 60px!important; overflow: hidden;">
+                        <img [src]="recipe.pictures[0].thumbnail"
+                            *ngIf="recipe.pictures[0] && recipe.pictures[0].thumbnail"
+                            style="height: 45px; width: auto; margin-left: 50%; transform: translateX(-50%);">
+                    </div>
+                    <div class="flex-fill ms-2">
+                        {{ recipe.name }}
+                    </div>
+                </a>
+                <li *ngIf="searchResults.recipes.length == 0 && searchResults.user.length == 0"
+                    class="list-group-item bg-light">
+                    <strong>{{l10n.locale.views.search.nothingFound}}</strong>
+                </li>
+            </ul>
+        </div>
+    </div>
+</div>

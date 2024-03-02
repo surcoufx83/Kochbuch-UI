@@ -1,0 +1,10 @@
+<div class="container px-0" *ngIf="recipe != undefined">
+    <div class="mt-4">
+        <a name="steps-anchor" id="steps-anchor"></a>
+        <app-h4 [title]="l10n.locale.views.recipe.steps.title" [icon]="stepsIcon"></app-h4>
+    </div>
+    <ng-container *ngFor="let item of recipe?.preparation?.steps">
+        <app-recipe-step-item [step]="item" [recipe]="recipe"
+            [inputServingsCount]="inputServingsCount"></app-recipe-step-item>
+    </ng-container>
+</div>

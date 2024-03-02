@@ -1,0 +1,8 @@
+<div class="d-flex align-items-center">
+    <h3 class="fw-bold me-3 align-items-center">
+        <app-icon *ngIf="icon" [icon]="icon" [marginEnd]="1"></app-icon>
+        {{title}}
+    </h3>
+    <div class="spinner-border text-light-green spinner-border-sm ms-auto" *ngIf="busy" role="status"
+        aria-hidden="true"></div>
+</div>

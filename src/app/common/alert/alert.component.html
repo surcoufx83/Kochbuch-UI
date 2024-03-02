@@ -1,0 +1,4 @@
+<div [ngClass]="['d-flex', 'alert', 'alert-'+style]" role="alert">
+    <app-icon *ngIf="icon" [icon]="icon" [marginEnd]="3" [addCss]="'fs-4'"></app-icon>
+    {{message}}
+</div>

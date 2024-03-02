@@ -1,0 +1,89 @@
+<div class="container px-0" *ngIf="recipe != undefined">
+    <div class="mt-4">
+        <a name="ingredients-anchor" id="ingredients-anchor"></a>
+        <app-h4 [title]="l10n.locale.views.recipe.ingredients.title" [icon]="ingredientsIcon"></app-h4>
+        <p><span>{{l10n.locale.views.recipe.ingredients.description.recipeIsCreatedFor + ' '}}
+                <strong>{{recipe.eaterCount}}</strong>
+                {{' ' + (recipe.eaterCount == 1 ? l10n.locale.views.recipe.ingredients.description.portion :
+                l10n.locale.views.recipe.ingredients.description.portions)}}.</span></p>
+    </div>
+    <ng-container *ngTemplateOutlet="recalcForm"></ng-container>
+    <ng-container
+        *ngTemplateOutlet="recipe.preparation.ingredientsGrouping == 'None' ? ingredientsTable : ingredientsTableByStep"></ng-container>
+</div>
+
+<ng-template #recalcForm>
+    <div class="my-2 d-flex align-items-center alert alert-dark alert-brown py-2" role="form">
+        <button type="button" class="btn btn-sm btn-medium-green me-2 px-3 d-block d-lg-none"
+            [disabled]="inputServingsCount == 1"
+            (click)="inputServingsCount = inputServingsCount - 1; servingsCountChanged();"><strong> -
+            </strong></button>
+        <input type="number" min="1" max="100" style="width: 5rem;"
+            class="form-control form-control-sm text-center me-2" [(ngModel)]="inputServingsCount"
+            (change)="servingsCountChanged()" name="servings" />
+        <button type="button" class="btn btn-sm btn-medium-green me-2 px-3 d-block d-lg-none"
+            [disabled]="inputServingsCount == 100"
+            (click)="inputServingsCount = inputServingsCount + 1; servingsCountChanged();"><strong> +
+            </strong></button>
+        <span>{{(inputServingsCount == 1 ? l10n.locale.views.recipe.ingredients.description.portion :
+            l10n.locale.views.recipe.ingredients.description.portions)}}</span>
+        <button type="button" class="btn btn-sm ms-auto btn-medium-green px-3"
+            *ngIf="recipe!.eaterCount != inputServingsCount"
+            (click)="inputServingsCount = recipe!.eaterCount; servingsCountChanged();"><app-icon [icon]="undoIcon"
+                [marginEnd]="0"></app-icon></button>
+    </div>
+</ng-template>
+
+<ng-template #ingredientsTable>
+    <table class="table table-hover table-borderless table-sm">
+        <thead>
+            <tr>
+                <th scope="col" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.ingredients.quantityHeader}}</th>
+                <th scope="col" class="text-start px-2">{{l10n.locale.views.recipe.ingredients.ingredientHeader}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let item of recipe!.preparation.ingredients; let i = index">
+                <td class="text-end px-2" style="width: 35%;">
+                    <ng-container *ngIf="item.quantity != null && item.quantity > 0">
+                        {{ dec(item.quantity / recipe!.eaterCount * inputServingsCount) }} {{ item.unit.name }}
+                    </ng-container>
+                </td>
+                <td class="text-start px-2">{{ item.description }}</td>
+            </tr>
+        </tbody>
+    </table>
+</ng-template>
+
+<ng-template #ingredientsTableByStep>
+    <table class="table table-hover table-borderless table-sm">
+        <thead>
+            <tr>
+                <th scope="col" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.ingredients.quantityHeader}}</th>
+                <th scope="col" class="text-start px-2">{{l10n.locale.views.recipe.ingredients.ingredientHeader}}</th>
+            </tr>
+        </thead>
+        <tbody>
+            <ng-container *ngFor="let stepitem of recipe!.preparation.steps; let s = index">
+                <ng-container *ngIf="stepitem.ingredients.length > 0">
+                    <tr *ngIf="recipe!.preparation.steps.length > 1">
+                        <th scope="rowgroup" class="fst-italic" colspan="2">
+                            {{ln( (stepitem.name != '' ? l10n.locale.views.recipe.steps.stepTitle :
+                            l10n.locale.views.recipe.steps.stepPlaceholder), [ stepitem.index + 1, stepitem.name ] )}}
+                        </th>
+                    </tr>
+                    <tr *ngFor="let item of stepitem.ingredients; let i = index">
+                        <td class="text-end px-2" style="width: 35%;">
+                            <ng-container *ngIf="item.quantity != null && item.quantity > 0">
+                                {{ dec(item.quantity / recipe!.eaterCount * inputServingsCount) }} {{ item.unit.name }}
+                            </ng-container>
+                        </td>
+                        <td class="text-start px-2">{{ item.description }}</td>
+                    </tr>
+                </ng-container>
+            </ng-container>
+        </tbody>
+    </table>
+</ng-template>

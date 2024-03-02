@@ -1,0 +1,28 @@
+<div class="card m-2 mt-0">
+    <a [routerLink]="['/recipe', recipe.id + '-' + urlenc(recipe.name)]"
+        [title]="ln(l10n.locale.views.recipe.card.cardsRecipeLinkTitle, [recipe.name, recipe.owner?.name])">
+        <div class="row g-0">
+            <div class="col-6">
+                <img [src]="recipe.pictures[0].thumbnail" class="img-fluid rounded-start"
+                    style="border-bottom-left-radius: 0!important;" alt="" *ngIf="recipe.pictures[0]">
+            </div>
+            <div class="col-6">
+                <div class="card-body">
+                    <span>{{subtitle}}:</span>
+                    <h5 class="card-title overflow-hidden">{{ recipe.name }}</h5>
+                </div>
+            </div>
+        </div>
+    </a>
+    <div class="card-footer text-muted text-center fs-7">
+        <ng-container *ngIf="recipe.owner"><a [routerLink]="['/recipe', recipe.id + '-' + urlenc(recipe.name)]" [title]="ln(l10n.locale.views.recipe.card.cardsUserLinkTitle, [recipe.owner.meta.fn != '' ?
+                recipe.owner.meta.fn : recipe.owner.name])"><app-icon [icon]="userIcon" [marginEnd]="1"></app-icon>
+                {{recipe.owner.meta.fn != '' ? recipe.owner.meta.fn : recipe.owner.name}}</a><ng-container
+                *ngIf="recipe.socials.views > 0"><span class="mx-1"> • </span></ng-container><span><app-icon
+                    [icon]="eyeIcon" [marginEnd]="1"></app-icon>
+                {{recipe.socials.views}}</span></ng-container><ng-container
+            *ngIf="recipe.socials.voting.avg != null"><span class="mx-1"> • </span><span><app-icon [icon]="voteIcon"
+                    [marginEnd]="1"></app-icon> {{dec(recipe.socials.voting.avg, 1, 1)}}
+            </span></ng-container>
+    </div>
+</div>

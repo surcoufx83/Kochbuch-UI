@@ -1,0 +1,40 @@
+<app-h4 [title]="l10n.locale.views.editor.groups.headData"></app-h4>
+
+<a [routerLink]="['/recipe', 'ai-scanner']" *ngIf="editRecipe.placeholder && user && user.loggedIn && user.betaTester">
+    <app-customizable-alert [style]="'success'">
+
+        <div class="d-flex flex-column flex-lg-row align-items-center justify-content-between">
+            <div class="d-flex align-items-center">
+                {{l10n.locale.views.editor.new.aiBotDescription}}
+            </div>
+            <div class="ms-lg-3 mt-3 mt-lg-3">
+                <button type="button"
+                    class="btn btn-sm btn-medium-green-inverted align-items-center text-nowrap ms-2 fs-6">
+                    <app-icon [icon]="aiIcon" [marginEnd]="2" [addCss]="'fs-6'"></app-icon>
+                    {{l10n.locale.views.editor.new.aiBotButton}}
+                </button>
+            </div>
+        </div>
+
+    </app-customizable-alert>
+</a>
+
+<!-- recipe title -->
+<app-editor-form-field id="recipe-name" [placholder]="l10n.locale.views.editor.fields.name.placeholder"
+    [required]="true" [(value)]="editRecipe.name" (valueChange)="change(originalRecipe.name != editRecipe.name)">
+    {{l10n.locale.views.editor.fields.name.title}}
+</app-editor-form-field>
+
+<!-- recipe description field -->
+<app-editor-form-textarea id="recipe-description" [placholder]="l10n.locale.views.editor.fields.description.placeholder"
+    [(value)]="editRecipe.description" (valueChange)="change(originalRecipe.description != editRecipe.description)">
+    {{l10n.locale.views.editor.fields.description.title}}
+</app-editor-form-textarea>
+
+<!-- eater count -->
+<app-editor-form-number-field id="recipe-eaterCount"
+    [placholder]="l10n.locale.views.editor.fields.eaterCount.placeholder" [required]="true"
+    [(value)]="editRecipe.eaterCount" [min]="1" [max]="100" [step]="1"
+    (valueChange)="change(originalRecipe.eaterCount != editRecipe.eaterCount)" [maxWidth]="'100px'">
+    {{l10n.locale.views.editor.fields.eaterCount.title}}
+</app-editor-form-number-field>

@@ -1,0 +1,213 @@
+<div class="modal fade" tabindex="-1" #modal id="voting-modal">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ alreadyVoted ? l10n.locale.views.recipe.voting.modal.titleAlreadyVoted :
+            l10n.locale.views.recipe.voting.modal.title }}
+            <div class="spinner-border text-light-green spinner-border-sm ms-1" *ngIf="busy" role="status"
+              aria-hidden="true"></div>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" #dismissBtn
+            [disabled]="busy"></button>
+        </div>
+        <div class="modal-body">
+          <p class="text-muted fs-8">
+            {{ alreadyVoted ? l10n.locale.views.recipe.voting.modal.titleDescriptionAlreadyVoted :
+            l10n.locale.views.recipe.voting.modal.titleDescription }}
+          </p>
+          <ng-container *ngTemplateOutlet="chapterCooked"></ng-container>
+          <ng-container *ngTemplateOutlet="chapterDifficulty"></ng-container>
+          <ng-container *ngTemplateOutlet="chapterHearts"></ng-container>
+        </div>
+        <div *ngIf="votingSaveError"
+          class="modal-body modal-body-danger text-danger border-start border-end border-danger border-3">
+          {{ l10n.locale.views.recipe.voting.modal.votingError }}
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-unselected" data-bs-dismiss="modal" [disabled]="busy">
+            {{ l10n.locale.views.recipe.voting.modal.cancelBtnText }}
+          </button>
+          <div>
+            <button type="button" class="btn btn-sm btn-unselected me-2" *ngIf="alreadyVoted" [disabled]="busy"
+              data-bs-toggle="modal" data-bs-target="#deletion-modal">
+              {{ l10n.locale.views.recipe.voting.modal.deleteBtnText }}
+            </button>
+            <button type="submit" class="btn btn-sm btn-medium-green" [disabled]="busy" (click)="onSubmitVote()">
+              {{ l10n.locale.views.recipe.voting.modal.submitBtnText }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ng-template #chapterCooked>
+    <h5>{{ l10n.locale.views.recipe.voting.modal.cookedTitle }}</h5>
+    <p *ngIf="cookedTimes > 0 && cookedLast != null" class="fs-8">
+      <app-icon [icon]="infoIcon" [marginEnd]="1"></app-icon>{{
+      ln(l10n.locale.views.recipe.voting.modal.cookedBeforeTimes, [ cookedTimes, date(cookedLast) ]) }}
+    </p>
+    <div class="btn-group" role="group" [attr.aria-label]="l10n.locale.views.recipe.voting.modal.cookedTitle">
+      <button type="button"
+        [ngClass]="{ 'btn btn-sm': true, 'btn-medium-green': voteCooked == 1, 'btn-unselected': voteCooked != 1 }"
+        (click)="voteCooked = 1">
+        {{ l10n.locale.views.recipe.voting.modal.cookedYes }}
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteCooked == 0,
+          'btn-unselected': voteCooked != 0
+        }" (click)="voteCooked = 0">
+        {{ l10n.locale.views.recipe.voting.modal.cookedNo }}
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteCooked == -1,
+          'btn-unselected': voteCooked != -1
+        }" (click)="voteCooked = -1">
+        {{ l10n.locale.views.recipe.voting.modal.cookedNoAnswer }}
+      </button>
+    </div>
+  </ng-template>
+  
+  <ng-template #chapterDifficulty>
+    <h5 class="mt-4">
+      {{ l10n.locale.views.recipe.voting.modal.difficultyTitle }}
+    </h5>
+    <p class="text-muted fs-8">
+      {{ l10n.locale.views.recipe.voting.modal.difficultyDescription }}
+    </p>
+    <div class="btn-group" role="group" [attr.aria-label]="
+        l10n.locale.views.recipe.voting.modal.difficultyDescription
+      ">
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteDifficulty == 1,
+          'btn-unselected': voteDifficulty != 1
+        }" (click)="voteDifficulty = 1">
+        {{ l10n.locale.views.recipe.voting.modal.difficulty1Easy }}
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteDifficulty == 2,
+          'btn-unselected': voteDifficulty != 2
+        }" (click)="voteDifficulty = 2">
+        {{ l10n.locale.views.recipe.voting.modal.difficulty2Medium }}
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteDifficulty == 3,
+          'btn-unselected': voteDifficulty != 3
+        }" (click)="voteDifficulty = 3">
+        {{ l10n.locale.views.recipe.voting.modal.difficulty3Hard }}
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteDifficulty == 0,
+          'btn-unselected': voteDifficulty != 0
+        }" (click)="voteDifficulty = 0">
+        {{ l10n.locale.views.recipe.voting.modal.difficultyNoAnswer }}
+      </button>
+    </div>
+  </ng-template>
+  
+  <ng-template #chapterHearts>
+    <h5 class="mt-4">{{ l10n.locale.views.recipe.voting.modal.rateTitle }}</h5>
+    <p class="text-muted fs-8">
+      {{ l10n.locale.views.recipe.voting.modal.rateDescription }}
+    </p>
+    <div class="btn-group" role="group" [attr.aria-label]="
+        l10n.locale.views.recipe.voting.modal.difficultyDescription
+      ">
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 1,
+          'btn-unselected': voteHearts != 1
+        }" (click)="voteHearts = 1">
+        <app-icon [icon]="recipeRateIcon"></app-icon>
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 2,
+          'btn-unselected': voteHearts != 2
+        }" (click)="voteHearts = 2">
+        <app-icon [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon>
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 3,
+          'btn-unselected': voteHearts != 3
+        }" (click)="voteHearts = 3">
+        <app-icon [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon><app-icon
+          [icon]="recipeRateIcon"></app-icon>
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 4,
+          'btn-unselected': voteHearts != 4
+        }" (click)="voteHearts = 4">
+        <app-icon [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon><app-icon
+          [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon>
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 5,
+          'btn-unselected': voteHearts != 5
+        }" (click)="voteHearts = 5">
+        <app-icon [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon><app-icon
+          [icon]="recipeRateIcon"></app-icon><app-icon [icon]="recipeRateIcon"></app-icon><app-icon
+          [icon]="recipeRateIcon"></app-icon>
+      </button>
+      <button type="button" [ngClass]="{
+          'btn btn-sm': true,
+          'btn-medium-green': voteHearts == 0,
+          'btn-unselected': voteHearts != 0
+        }" (click)="voteHearts = 0">
+        {{ l10n.locale.views.recipe.voting.modal.difficultyNoAnswer }}
+      </button>
+    </div>
+  </ng-template>
+  
+  <div class="modal fade" tabindex="-1" id="deletion-modal" [attr.data-bs-backdrop]="busy ? 'static' : true"
+    [attr.data-bs-keyboard]="busy ? false : true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">
+            {{ l10n.locale.views.recipe.voting.deletionModal.title }}
+            <div class="spinner-border text-danger spinner-border-sm ms-1" *ngIf="busy" role="status" aria-hidden="true">
+            </div>
+          </h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" [disabled]="busy"
+            #closeDeletionBtn></button>
+        </div>
+        <div class="modal-body">
+          <p>
+            {{ l10n.locale.views.recipe.voting.deletionModal.titleDescription }}
+          </p>
+          <div class="form-check">
+            <input class="form-check-input" type="checkbox" [ngModel]="deleteCookedRecordsToo"
+              id="delete-cooked-records" />
+            <label class="form-check-label" for="delete-cooked-records">{{
+              l10n.locale.views.recipe.voting.deletionModal.deletedCookedRecords
+              }}</label>
+          </div>
+        </div>
+        <div *ngIf="deletionSaveError"
+          class="modal-body modal-body-danger text-danger border-start border-end border-danger border-3">
+          {{ l10n.locale.views.recipe.voting.deletionModal.deletionError }}
+        </div>
+        <div class="modal-footer justify-content-between">
+          <button type="button" class="btn btn-sm btn-unselected" data-bs-toggle="modal" data-bs-target="#voting-modal"
+            #dismissDeletionBtn [disabled]="busy">
+            {{ l10n.locale.views.recipe.voting.deletionModal.cancelBtnText }}
+          </button>
+          <button type="submit" class="btn btn-sm btn-danger me-2" *ngIf="alreadyVoted" [disabled]="busy"
+            (click)="onDeleteRecord()">
+            {{ l10n.locale.views.recipe.voting.deletionModal.deleteBtnText }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>

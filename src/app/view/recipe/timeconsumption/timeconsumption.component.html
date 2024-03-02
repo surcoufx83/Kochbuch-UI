@@ -1,0 +1,61 @@
+<div class="container px-0" *ngIf="recipe != undefined">
+    <div class="mt-4">
+        <app-h4 [title]="l10n.locale.views.recipe.timeconsumption.title" [icon]="timeConsumptionIcon"></app-h4>
+
+    </div>
+    <ng-container *ngTemplateOutlet="consumptionChart"></ng-container>
+    <ng-container *ngTemplateOutlet="consumptionTable"></ng-container>
+</div>
+
+<ng-template #consumptionChart>
+    <div class="my-2 d-flex align-items-center py-2 rounded-child">
+        <div class="bg-light-green text-center mx-1 h-100" *ngIf="prepareTime > 0"
+            [ngStyle]="{ width: prepareTimeRel + '%' }"
+            [title]="ln(l10n.locale.views.recipe.timeconsumption.preparation.short + ': [0]', [time(prepareTime, prepareTimeUnit)])">
+            <div class="text-truncate px-3 py-1 fs-8">{{ time(prepareTime, prepareTimeUnit, true, true)
+                }}&nbsp;<app-icon [icon]="prepareMealIcon" [marginStart]="1"></app-icon></div>
+        </div>
+        <div class="bg-medium-green text-center mx-1 h-100" *ngIf="restTime > 0"
+            [ngStyle]="{ width: restTimeRel + '%' }"
+            [title]="ln(l10n.locale.views.recipe.timeconsumption.rest.short + ': [0]', [time(restTime, restTimeUnit)])">
+            <div class="text-truncate px-3 py-1 fs-8">{{ time(restTime, restTimeUnit, true, true) }}&nbsp;<app-icon
+                    [icon]="restMealIcon" [marginStart]="1"></app-icon></div>
+        </div>
+        <div class="bg-dark-green text-center mx-1 h-100" *ngIf="cookingTime > 0"
+            [ngStyle]="{ width: cookingTimeRel + '%' }"
+            [title]="ln(l10n.locale.views.recipe.timeconsumption.cooking.short + ': [0]', [time(cookingTime, cookingTimeUnit)])">
+            <div class="text-truncate px-3 py-1 fs-8">{{ time(cookingTime, cookingTimeUnit, true, true)
+                }}&nbsp;<app-icon [icon]="cookMealIcon" [marginStart]="1"></app-icon></div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #consumptionTable>
+    <table class="table table-hover table-borderless table-sm">
+        <tbody>
+            <tr>
+                <th scope="row" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.timeconsumption.preparation.long}}:</th>
+                <td class="text-start px-2">{{ prepareTime > 0 ? time(prepareTime, prepareTimeUnit, false, true) :
+                    l10n.locale.views.recipe.timeconsumption.timeNotSpecified }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.timeconsumption.rest.long}}:</th>
+                <td class="text-start px-2">{{ restTime > 0 ? time(restTime, restTimeUnit, false, true) :
+                    l10n.locale.views.recipe.timeconsumption.timeNotSpecified }}</td>
+            </tr>
+            <tr class="border-top-0 border-start-0 border-end-0 border-1 border-dark">
+                <th scope="row" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.timeconsumption.cooking.long}}:</th>
+                <td class="text-start px-2">{{ cookingTime > 0 ? time(cookingTime, cookingTimeUnit, false, true) :
+                    l10n.locale.views.recipe.timeconsumption.timeNotSpecified }}</td>
+            </tr>
+            <tr>
+                <th scope="row" class="text-end px-2" style="width: 35%;">
+                    {{l10n.locale.views.recipe.timeconsumption.totalTimeConsumed}}:</th>
+                <td class="text-start px-2"><strong>{{ time(totalTime, totalTimeUnit, false, true) }}</strong></td>
+            </tr>
+        </tbody>
+    </table>
+</ng-template>

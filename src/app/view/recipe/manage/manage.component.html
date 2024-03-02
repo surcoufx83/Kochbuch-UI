@@ -1,0 +1,165 @@
+<div class="container px-0" *ngIf="recipe != undefined">
+    <ng-container *ngIf="isOwner && user != undefined">
+        <hr class="my-4" />
+        <div>
+            <app-h5 [title]="l10n.locale.views.recipe.manage.title"></app-h5>
+        </div>
+        <ng-component *ngTemplateOutlet="createdWithEditButton"></ng-component>
+        <div class="d-flex flex-column mb-1">
+            <div class="d-flex flex-column flex-lg-row justify-content-between">
+                <div>
+                    {{l10n.locale.views.recipe.manage.publicVisbility.title}}
+                </div>
+                <div class="btn-group" role="group" aria-label="Basic example">
+                    <button type="button" (click)="onPublishRecipe('private')"
+                        [disabled]="publishPrivateBusy || publishSharedBusy || publishGlobalBusy"
+                        [ngClass]="{'btn btn-sm text-nowrap': true, 'btn-medium-green': !recipe!.socials.sharing.publication.isPublished.external && !recipe!.socials.sharing.publication.isPublished.internal, 'btn-unselected': recipe!.socials.sharing.publication.isPublished.external || recipe!.socials.sharing.publication.isPublished.internal}">
+                        <app-icon [icon]="publishPrivateBusy ? spinnerIcon : privateRecipeIcon"
+                            [spin]="publishPrivateBusy" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.manage.publicVisbility.btnPrivate}}
+                    </button>
+                    <button type="button" (click)="onPublishRecipe('internal')"
+                        [disabled]="publishPrivateBusy || publishSharedBusy || publishGlobalBusy"
+                        [ngClass]="{'btn btn-sm text-nowrap': true, 'btn-medium-green': recipe!.socials.sharing.publication.isPublished.internal, 'btn-unselected': !recipe!.socials.sharing.publication.isPublished.internal}">
+                        <app-icon [icon]="publishSharedBusy ? spinnerIcon : sharedRecipeIcon" [spin]="publishSharedBusy"
+                            [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.manage.publicVisbility.btnUserOnly}}
+                    </button>
+                    <button type="button" (click)="onPublishRecipe('external')"
+                        [disabled]="publishPrivateBusy || publishSharedBusy || publishGlobalBusy"
+                        [ngClass]="{'btn btn-sm text-nowrap': true, 'btn-medium-green': recipe!.socials.sharing.publication.isPublished.external, 'btn-unselected': !recipe!.socials.sharing.publication.isPublished.external}">
+                        <app-icon [icon]="publishGlobalBusy ? spinnerIcon : publicRecipeIcon" [spin]="publishGlobalBusy"
+                            [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.manage.publicVisbility.btnPublic}}
+                    </button>
+                </div>
+            </div>
+            <div>
+                <ul class="list-group list-group-flush fs-7">
+                    <li class="list-group-item">
+                        <strong>{{l10n.locale.views.recipe.manage.publicVisbility.btnPrivate}}</strong> =
+                        {{l10n.locale.views.recipe.manage.publicVisbility.hintPrivate}}
+                    </li>
+                    <li class="list-group-item">
+                        <strong>{{l10n.locale.views.recipe.manage.publicVisbility.btnUserOnly}}</strong> =
+                        {{l10n.locale.views.recipe.manage.publicVisbility.hintUserOnly}}
+                    </li>
+                    <li class="list-group-item pe-0">
+                        <button type="button" (click)="onShare()"
+                            *ngIf="recipe!.socials.sharing.publication.isPublished.external"
+                            class="btn btn-sm text-nowrap btn-medium-green float-end ms-2">
+                            <app-icon [icon]="shareIcon" [marginEnd]="1"></app-icon>
+                            {{l10n.locale.views.recipe.manage.publicVisbility.shareBtn}}
+                        </button>
+                        <strong>{{l10n.locale.views.recipe.manage.publicVisbility.btnPublic}}</strong> =
+                        {{l10n.locale.views.recipe.manage.publicVisbility.hintPublic}}
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <ng-component *ngTemplateOutlet="deleteRecipe"></ng-component>
+    </ng-container>
+</div>
+
+<ng-template #createdWithEditButton>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <span>
+            {{l10n.locale.views.recipe.manage.created}}: {{ date(recipe!.created) }}
+        </span>
+        <a [routerLink]="['/recipe', 'edit', recipe!.id + '-' + urlenc(recipe!.name)]">
+            <button type="button" class="btn btn-sm btn-medium-green text-nowrap ms-2">
+                <app-icon icon="fas fa-pen" [marginEnd]="1"></app-icon>
+                {{l10n.locale.views.recipe.manage.editBtn}}
+            </button>
+        </a>
+    </div>
+    <p class="text-muted fs-7">
+        {{l10n.locale.views.recipe.manage.editHint}}
+    </p>
+</ng-template>
+
+<!-- <ng-template #publishedWithRejectButton>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <span>
+            {{l10n.locale.views.recipe.manage.publicVisbility}}
+        </span>
+        <button type="button" class="btn btn-sm btn-unselected ms-2" [disabled]="rejectBusy" (click)="onRejectRecipe()">
+            <app-icon icon="fas fa-unlock" [marginEnd]="1" *ngIf="!rejectBusy"></app-icon>
+            <app-icon [icon]="spinnerIcon" [marginEnd]="1" *ngIf="rejectBusy"></app-icon>
+            {{l10n.locale.views.recipe.manage.rejectBtn}}
+        </button>
+    </div>
+    <p class="text-muted fs-7">
+        {{l10n.locale.views.recipe.manage.rejectHint}}
+    </p>
+</ng-template>
+
+<ng-template #rejectedWithPublishButton>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <span>
+            {{l10n.locale.views.recipe.manage.rejected}}
+        </span>
+        <button type="button" class="btn btn-sm btn-medium-green text-nowrap ms-2" [disabled]="publishBusy"
+            (click)="onPublishRecipe()">
+            <app-icon icon="fas fa-lock" [marginEnd]="1" *ngIf="!publishBusy"></app-icon>
+            <app-icon [icon]="spinnerIcon" [marginEnd]="1" *ngIf="publishBusy"></app-icon>
+            {{l10n.locale.views.recipe.manage.publishBtn}}
+        </button>
+    </div>
+    <p class="text-muted fs-7">
+        {{l10n.locale.views.recipe.manage.publishHint}}
+    </p>
+</ng-template> -->
+
+<ng-template #deleteRecipe>
+    <div class="d-flex justify-content-between align-items-center mb-1">
+        <span>
+            {{l10n.locale.views.recipe.manage.deletion}}
+        </span>
+        <button type="button" class="btn btn-sm btn-outline-danger text-nowrap ms-2" [disabled]="deleteBusy"
+            data-bs-toggle="modal" data-bs-target="#delete-recipe-modal">
+            <app-icon icon="fas fa-trash" [marginEnd]="1" *ngIf="!deleteBusy"></app-icon>
+            <app-icon [icon]="spinnerIcon" [marginEnd]="1" *ngIf="deleteBusy"></app-icon>
+            {{l10n.locale.views.recipe.manage.deleteBtn}}
+        </button>
+    </div>
+    <p class="text-muted fs-7">
+        {{l10n.locale.views.recipe.manage.deleteHint}}
+    </p>
+</ng-template>
+
+<div class="modal fade" tabindex="-1" id="delete-recipe-modal" [attr.data-bs-backdrop]="deleteBusy ? 'static' : true"
+    [attr.data-bs-keyboard]="deleteBusy ? false : true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ l10n.locale.views.recipe.manage.deleteModalTitle }}
+                    <div class="spinner-border text-danger spinner-border-sm ms-1" *ngIf="deleteBusy" role="status"
+                        aria-hidden="true">
+                    </div>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    [disabled]="deleteBusy" #closeDeleteRecipeBtn1></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ ln(l10n.locale.views.recipe.manage.deleteModalDescription, [recipe!.name]) }}
+                </p>
+            </div>
+            <div *ngIf="deletionSaveError"
+                class="modal-body modal-body-danger text-danger border-start border-end border-danger border-3">
+                {{ l10n.locale.views.recipe.manage.deleteModalError }}
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-sm btn-unselected" data-bs-dismiss="modal" [disabled]="deleteBusy">
+                    {{ l10n.locale.views.recipe.manage.deleteModalBackBtn }}
+                </button>
+                <button type="submit" class="btn btn-sm btn-danger me-2" [disabled]="deleteBusy"
+                    (click)="onDeleteRecipe()">
+                    {{ l10n.locale.views.recipe.manage.deleteModalSubmitBtn }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

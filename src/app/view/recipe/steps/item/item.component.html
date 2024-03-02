@@ -1,0 +1,31 @@
+<div class="my-2">
+    <app-h5 *ngIf="recipe.preparation.steps.length > 1 || step.name != ''" class="mb-2"
+        [title]="ln( (step.name != '' ? l10n.locale.views.recipe.steps.stepTitle : l10n.locale.views.recipe.steps.stepPlaceholder), [ step.index + 1, step.name ] )"></app-h5>
+    <ng-container *ngIf="totalTime > 0">
+        <div class="align-items-center fs-7">
+            <app-icon [icon]="timeConsumptionIcon" [marginEnd]="1" [fontSize]="8"></app-icon>
+            <span *ngIf="prepareTime > 0">{{ time(prepareTime, timeUnits) }} {{
+                l10n.locale.views.editor.fields.stepTimeConsumptionPreparing.title }}</span><span *ngIf="restTime > 0">
+                {{ time(restTime, timeUnits) }} {{ l10n.locale.views.editor.fields.stepTimeConsumptionResting.title
+                }}</span><span *ngIf="(prepareTime > 0 || restTime > 0) && cookingTime > 0">, </span><span
+                *ngIf="cookingTime > 0">{{
+                time(cookingTime, timeUnits) }} {{ l10n.locale.views.editor.fields.stepTimeConsumptionCooking.title }}
+            </span>
+        </div>
+    </ng-container>
+    <ng-container *ngIf="recipe.preparation.ingredientsGrouping == 'Steps' && step.ingredients.length > 0">
+        <div class="align-items-center fs-7 mb-3">
+            <app-icon [icon]="ingredientsIcon" [marginEnd]="1" [fontSize]="8"></app-icon>
+            {{l10n.locale.views.editor.groups.stepRequiredIngredients}}:
+            <ng-template *ngIf="step.ingredients.length == 0; else ingredientsList"></ng-template>
+        </div>
+    </ng-container>
+    <p class="pre-wrap mb-4">{{ step.userContent }}</p>
+</div>
+
+<ng-template #ingredientsList>
+    <ng-container *ngFor="let item of step.ingredients; let i = index"><ng-container *ngIf="i > 0">,
+        </ng-container><span><ng-container *ngIf="item.quantity != null && item.quantity > 0"> {{ dec(item.quantity /
+                recipe!.eaterCount * inputServingsCount) }}</ng-container> {{ item.unit.name }}
+            {{item.description}}</span></ng-container>
+</ng-template>

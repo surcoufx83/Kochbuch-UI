@@ -1,0 +1,6 @@
+<div class="container-fluid d-flex justify-content-center">
+    <button type="button" class="btn btn-medium-green mb-3" (click)="btnClicked.emit()">
+        <app-icon [icon]="addIcon" [marginEnd]="title == '' ? 0 : 1"></app-icon>
+        {{title}}
+    </button>
+</div>

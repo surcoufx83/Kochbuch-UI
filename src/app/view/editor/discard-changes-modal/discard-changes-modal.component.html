@@ -1,0 +1,28 @@
+<div class="modal fade" tabindex="-1" id="discard-changes-modal" [attr.data-bs-backdrop]="true"
+    [attr.data-bs-keyboard]="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ l10n.locale.views.editor.groups.discardModalTitle }}
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"
+                    #closeModalBtn1></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ l10n.locale.views.editor.groups.discardModalDescription }}
+                </p>
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-sm btn-unselected" data-bs-dismiss="modal">
+                    {{ l10n.locale.views.editor.groups.discardModalBackBtn }}
+                </button>
+                <button type="submit" class="btn btn-sm btn-danger me-2" data-bs-dismiss="modal"
+                    (click)="discardAccepted.emit()">
+                    {{ l10n.locale.views.editor.groups.discardModalSubmitBtn }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

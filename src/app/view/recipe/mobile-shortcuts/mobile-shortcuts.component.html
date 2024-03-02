@@ -1,0 +1,23 @@
+<ng-container *ngIf="recipe != undefined">
+    <div class="d-block d-lg-none fixed-bottom">
+        <div class="row">
+            <div class="col col-12 col-lg-6 shortcuts-outer">
+                <div class="d-flex justify-content-between py-3 px-3 border-top border-secondary">
+                    <button type="button" class="btn btn-medium-green text-nowrap" (click)="scrollTo('gallery-anchor')">
+                        <app-icon [icon]="galleryIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.shortcuts.gotoPicturesBtn}}
+                    </button>
+                    <button type="button" class="btn btn-medium-green text-nowrap"
+                        (click)="scrollTo('ingredients-anchor')">
+                        <app-icon [icon]="ingredientsIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.shortcuts.gotoIngredientsBtn}}
+                    </button>
+                    <button type="button" class="btn btn-medium-green text-nowrap" (click)="scrollTo('steps-anchor')">
+                        <app-icon [icon]="stepsIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.recipe.shortcuts.gotoStepsBtn}}
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-container>

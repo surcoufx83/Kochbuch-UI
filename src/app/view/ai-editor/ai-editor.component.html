@@ -1,0 +1,36 @@
+<app-h4 [title]="l10n.locale.views.editor.aiEditor.title"></app-h4>
+<p>{{l10n.locale.views.editor.aiEditor.description}}</p>
+
+<app-alert [style]="'warning'" [icon]="privacyIcon"
+    [message]="l10n.locale.views.editor.aiEditor.dataProtectionWarning"></app-alert>
+
+<div [ngClass]="['d-flex', 'alert']" role="alert" *ngIf="showStillBusyMessage">
+    <app-icon [icon]="stillBusyIcon" [marginEnd]="3" [addCss]="'fs-4'"
+        [ngStyle]="{ color: stillBusyColor, transition: 'color 1s ease' }"></app-icon>
+    {{ ln(l10n.locale.views.editor.aiEditor.stillBusyMessage, [uploadDuration]) }}
+</div>
+
+<div class="mb-3">
+    <div class="btn-group w-100">
+        <button type="button" *ngIf="busy" class="btn btn-medium-green text-nowrap mb-2" disabled>
+            <app-icon [icon]="spinnerIcon" [marginEnd]="1"></app-icon>
+            {{ l10n.locale.views.editor.aiEditor.uploadBusyButton }}
+        </button>
+        <button type="button" *ngIf="!busy" class="btn btn-medium-green text-nowrap me-1 mb-2"
+            (click)="uploadFileInput.click()" [disabled]="busy">
+            <app-icon [icon]="pictureUploadIcon" [marginEnd]="1"></app-icon>
+            {{ l10n.locale.views.editor.aiEditor.uploadPictureButton }}
+        </button>
+        <button type="button" *ngIf="!busy && isMobile" class="btn btn-medium-green text-nowrap mb-2"
+            (click)="takePictureInput.click()" [disabled]="busy">
+            <app-icon [icon]="cameraIcon" [marginEnd]="1"></app-icon>
+            {{ l10n.locale.views.editor.aiEditor.takePictureButton }}
+        </button>
+    </div>
+    <input class="d-none" type="file" name="upload-file" #uploadFileInput (change)="onChangeFile($event)"
+        [accept]="acceptMimeTypes">
+    <input class="d-none" type="file" name="take-picture" #takePictureInput capture="environment"
+        (change)="onChangeFile($event)" [accept]="acceptMimeTypes">
+</div>
+<app-alert *ngIf="aiReplyMessage != ''" [style]="'danger'" [icon]="attentionIcon"
+    [message]="ln(l10n.locale.views.editor.aiEditor.errorResponse, [aiReplyMessage])"></app-alert>

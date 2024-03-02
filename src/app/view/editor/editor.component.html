@@ -1,0 +1,190 @@
+<div *ngIf="hasChanges">&nbsp;</div>
+
+<form #editorform (submit)="onSaveChanges()" [noValidate]="false">
+
+    <ng-container *ngIf="editRecipeObject?.placeholder === false" [ngTemplateOutlet]="editRecipeHeader"></ng-container>
+    <ng-container *ngIf="editRecipeObject?.placeholder === true" [ngTemplateOutlet]="newRecipeHeader"></ng-container>
+    <p *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+        {{l10n.locale.views.editor.common.editNote1}}</p>
+    <p *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+        {{l10n.locale.views.editor.common.editNote2}}</p>
+
+    <ng-container *ngIf="editRecipeObject && recipe">
+        <app-recipe-editor-header [editRecipe]="editRecipeObject" [originalRecipe]="recipe"
+            (entityChanged)="onChangeProperty()"></app-recipe-editor-header>
+        <ng-container *ngIf="!ingredientsPerStep || recipe.preparation.ingredientsGrouping == 'None'"
+            [ngTemplateOutlet]="recipeIngredientsEditor"></ng-container>
+        <ng-container [ngTemplateOutlet]="recipeStepsEditor"></ng-container>
+        <ng-container [ngTemplateOutlet]="newRecipeSubmission"></ng-container>
+    </ng-container>
+
+    <ng-template #editRecipeHeader>
+        <ng-container *ngIf="recipe != undefined; else loadingTemplate">
+            <app-h3 [title]="ln(l10n.locale.views.editor.edit.title, [recipe.name])" [busy]="loading"></app-h3>
+            <p class="text-muted"
+                *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+                {{l10n.locale.views.editor.edit.description1}}</p>
+        </ng-container>
+    </ng-template>
+
+    <ng-template #loadingTemplate>
+        <div class="container px-0">
+            <app-h3 [title]="l10n.locale.views.recipe.pageloading" [busy]="loading"></app-h3>
+        </div>
+    </ng-template>
+
+    <ng-template #newRecipeHeader>
+        <app-h3 [title]="l10n.locale.views.editor.new.title"></app-h3>
+        <p class="text-muted mb-0"
+            *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+            {{l10n.locale.views.editor.new.description1}}</p>
+        <p class="text-muted"
+            *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+            {{l10n.locale.views.editor.new.description2}}</p>
+    </ng-template>
+
+    <ng-template #recipeIngredientsEditor>
+        <app-h4 [title]="l10n.locale.views.editor.groups.ingredients"></app-h4>
+        <div class="my-2 d-flex align-items-center alert alert-dark alert-brown py-2" role="form">
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="enable-ingredients-grouping"
+                    name="enable-ingredients-grouping" [(ngModel)]="ingredientsPerStep"
+                    (change)="onChangeIngredientsGrouping()">
+                <label class="form-check-label"
+                    for="enable-ingredients-grouping">{{l10n.locale.views.editor.groups.ingredientsPerStep}}</label>
+            </div>
+        </div>
+        <p class="text-muted">{{ingredientsPerStep ?
+            l10n.locale.views.editor.groups.ingredientsPerStepDescription :
+            l10n.locale.views.editor.groups.ingredientsDescription}}</p>
+        <ng-container *ngIf="!ingredientsPerStep">
+            <app-recipe-editor-ingredients id="mobile-common" [listing]="editRecipeObject!.preparation.ingredients"
+                [sortOn]="sortIngredientsSwitch" (listingChange)="onChangeProperty()" [scope]="'Recipe'">
+            </app-recipe-editor-ingredients>
+        </ng-container>
+    </ng-template>
+
+    <ng-template #recipeStepsEditor>
+        <app-h4 [title]="l10n.locale.views.editor.groups.steps"></app-h4>
+        <p class="text-muted"
+            *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+            {{l10n.locale.views.editor.groups.stepsDescription}}</p>
+        <ng-container *ngFor="let step of editRecipeObject!.preparation.steps; let i = index">
+            <div class="d-flex justify-content-between align-items-center">
+                <app-h5 [title]="ln(l10n.locale.views.recipe.steps.stepPlaceholder, [ i + 1 ])"></app-h5>
+                <button type="button" class="btn btn-sm btn-outline-danger" (click)="deleteStep(i)">
+                    {{l10n.locale.views.editor.groups.stepDeleteBtn}}
+                </button>
+            </div>
+
+            <app-editor-form-field [id]="'editor-recipe-step-title-' + i"
+                [placholder]="l10n.locale.views.editor.fields.stepTitle.placeholder" [required]="false"
+                [(value)]="editRecipeObject!.preparation.steps[i].name" (valueChange)="onChangeProperty()">
+                {{l10n.locale.views.editor.fields.stepTitle.title}}
+            </app-editor-form-field>
+
+            <ng-container *ngIf="ingredientsPerStep">
+                <div class="mb-3">
+                    <p class="form-label fw-bold">{{l10n.locale.views.editor.groups.ingredients}}</p>
+                    <app-recipe-editor-ingredients [id]="'mobile-step-' + i"
+                        [listing]="editRecipeObject!.preparation.steps[i].ingredients" [sortOn]="sortIngredientsSwitch"
+                        [showDescriptions]="i == 0" (listingChange)="onChangeProperty()" [scope]="'Step'">
+                    </app-recipe-editor-ingredients>
+                </div>
+            </ng-container>
+
+            <app-editor-form-textarea [id]="'editor-recipe-step-preparation-' + i"
+                [placholder]="l10n.locale.views.editor.fields.stepPreparation.placeholder" [required]="i == 0"
+                [(value)]="editRecipeObject!.preparation.steps[i].userContent" (valueChange)="onChangeProperty()">
+                {{l10n.locale.views.editor.fields.stepPreparation.title}}
+            </app-editor-form-textarea>
+
+            <div class="fw-bold mb-3">{{l10n.locale.views.editor.fields.stepTimeConsumption.title}}</div>
+            <div class="row mb-5">
+                <div class="col col-4">
+                    <app-editor-form-number-field [id]="'editor-recipe-step-time-preparation-' + i"
+                        [placholder]="l10n.locale.views.editor.fields.stepTimeConsumptionPreparing.placeholder"
+                        [min]="0" [max]="20160" [step]="1"
+                        [(value)]="editRecipeObject!.preparation.steps[i].timeConsumed.preparing"
+                        (valueChange)="onChangeProperty()">
+                        {{l10n.locale.views.editor.fields.stepTimeConsumptionPreparing.title}}
+                    </app-editor-form-number-field>
+                </div>
+                <div class="col col-4">
+                    <app-editor-form-number-field [id]="'editor-recipe-step-time-rest-' + i"
+                        [placholder]="l10n.locale.views.editor.fields.stepTimeConsumptionResting.placeholder" [min]="0"
+                        [max]="20160" [step]="1" [(value)]="editRecipeObject!.preparation.steps[i].timeConsumed.rest"
+                        (valueChange)="onChangeProperty()">
+                        {{l10n.locale.views.editor.fields.stepTimeConsumptionResting.title}}
+                    </app-editor-form-number-field>
+                </div>
+                <div class="col col-4">
+                    <app-editor-form-number-field [id]="'editor-recipe-step-time-cooking-' + i"
+                        [placholder]="l10n.locale.views.editor.fields.stepTimeConsumptionCooking.placeholder" [min]="0"
+                        [max]="20160" [step]="1" [(value)]="editRecipeObject!.preparation.steps[i].timeConsumed.cooking"
+                        (valueChange)="onChangeProperty()">
+                        {{l10n.locale.views.editor.fields.stepTimeConsumptionCooking.title}}
+                    </app-editor-form-number-field>
+                </div>
+            </div>
+
+        </ng-container>
+
+        <app-editor-add-btn (btnClicked)="addStepPlaceholder()"
+            [title]="l10n.locale.views.editor.groups.stepAddBtnText"></app-editor-add-btn>
+
+    </ng-template>
+
+    <ng-template #newRecipeSubmission>
+        <app-h4 [title]="l10n.locale.views.editor.groups.submissionTitle"></app-h4>
+        <p class="text-muted"
+            *ngIf="!recipe?.owner?.statistics?.recipes?.created || recipe?.owner?.statistics?.recipes?.created! < 3">
+            {{l10n.locale.views.editor.groups.submissionDescription}}</p>
+        <div class="d-flex justify-content-between">
+            <button type="button" class="btn btn-outline-danger mb-3" data-bs-toggle="modal"
+                data-bs-target="#discard-changes-modal" [disabled]="saving">
+                <app-icon [icon]="deleteIcon" [marginEnd]="1"></app-icon>
+                {{l10n.locale.views.editor.groups.discardBtntext}}
+            </button>
+            <button type="submit" class="btn btn-medium-green mb-3" [disabled]="saving">
+                <app-icon [icon]="saving ? spinnerIcon : saveIcon" [marginEnd]="1"></app-icon>
+                {{l10n.locale.views.editor.groups.submitBtnText}}
+            </button>
+        </div>
+
+        <div class="d-flex justify-content-around">
+            <ng-container *ngIf="editSent">
+                <ng-container *ngIf="editErrorCode == 0">
+                    <div class="alert alert-success" role="alert">
+                        <app-icon [icon]="saveIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.views.editor.validation.savingSuccess}} <a class="text-light stretched-link"
+                            [routerLink]="['/recipe', editRecipeObject!.id + '-' + urlenc(editRecipeObject!.name)]">{{l10n.locale.views.editor.validation.gotoRecipeLink}}</a>
+                    </div>
+                </ng-container>
+                <ng-container *ngIf="editErrorCode > 0">
+                    <ng-container *ngIf="editErrorUsererror">
+                        <div class="alert alert-warning" role="alert">
+                            <app-icon [icon]="attentionIcon" [marginEnd]="1"></app-icon>
+                            {{l10n.locale.views.editor.validation.errorSaving}}
+                            <strong>{{editErrorMessage}}</strong>
+                        </div>
+                    </ng-container>
+                    <ng-container *ngIf="!editErrorUsererror">
+                        <div class="alert alert-danger" role="alert">
+                            <app-icon [icon]="attentionIcon" [marginEnd]="1"></app-icon>
+                            {{l10n.locale.views.editor.validation.errorSavingNonSolvable2}}
+                            <strong>{{editErrorMessage}}</strong>
+                        </div>
+                    </ng-container>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="alert alert-danger" role="alert" *ngIf="isValidated && !isValid">
+            <app-icon [icon]="attentionIcon" [marginEnd]="1"></app-icon>
+            Das Formular enthält noch Fehler.
+        </div>
+    </ng-template>
+
+</form>
+
+<app-discard-changes-modal (discardAccepted)="onRevertChanges()"></app-discard-changes-modal>

@@ -1,0 +1,8 @@
+<div class="mb-3">
+    <label [for]="'form-textarea--' + id" [ngClass]="{ 'form-label fw-bold': true, 'required': required }">
+        <ng-content></ng-content>
+    </label>
+    <textarea class="form-control" [ngStyle]="{ 'min-height': '86px', 'height': height, 'max-height': '60vh' }"
+        [name]="'form-textarea--' + id" [id]="'form-textarea--' + id" autocomplete="off" [placeholder]="placholder"
+        [(ngModel)]="value" [required]="required" (change)="valueChange.emit(value)"></textarea>
+</div>

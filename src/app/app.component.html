@@ -1,0 +1,22 @@
+<app-navbar></app-navbar>
+
+<div class="app-main" id="app-main">
+  <div class="d-flex h-100">
+    <div class="d-none d-lg-block">
+      <app-sidebar></app-sidebar>
+    </div>
+    <div class="flex-fill h-100 overflow-auto" id="app-scrollable">
+      <div class="d-flex flex-column h-100">
+        <app-status-navbar></app-status-navbar>
+        <div class="container flex-fill">
+          <main class="py-4">
+            <router-outlet></router-outlet>
+          </main>
+        </div>
+        <footer class="bg-dark-blue text-light fs-8 px-2">
+          <app-footerbar></app-footerbar>
+        </footer>
+      </div>
+    </div>
+  </div>
+</div>

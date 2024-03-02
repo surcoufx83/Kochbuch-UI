@@ -1,0 +1,42 @@
+{
+  "name": "kochbuch-frontend",
+  "version": "2.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve --ssl --open --host 0.0.0.0",
+    "build": "ng build & del /Q Z:\\dev\\www\\kochbuch-dev\\public\\ui\\*.* & del /Q Z:\\dev\\www\\kochbuch-dev\\public\\ui\\assets\\*.* & copy dist\\kochbuch-frontend Z:\\dev\\www\\kochbuch-dev\\public\\ui & copy dist\\kochbuch-frontend\\assets Z:\\dev\\www\\kochbuch-dev\\public\\ui\\assets",
+    "watch": "ng build --watch --configuration development",
+    "test": "ng test"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^17.2.3",
+    "@angular/common": "^17.2.3",
+    "@angular/compiler": "^17.2.3",
+    "@angular/core": "^17.2.3",
+    "@angular/forms": "^17.2.3",
+    "@angular/platform-browser": "^17.2.3",
+    "@angular/platform-browser-dynamic": "^17.2.3",
+    "@angular/router": "^17.2.3",
+    "@fontsource/cinzel": "^4.5.10",
+    "@fontsource/source-sans-pro": "^4.5.11",
+    "@fortawesome/fontawesome-free": "^6.5.1",
+    "angular-device-information": "^4.0.0",
+    "bootstrap": "^5.3.3",
+    "date-fns": "^2.30.0",
+    "flag-icons": "^7.1.0",
+    "ngx-toastr": "^17.0.2",
+    "rxjs": "^7.8.1",
+    "tslib": "^2.6.2",
+    "zone.js": "^0.14.4"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^17.2.2",
+    "@angular/cli": "^17.2.2",
+    "@angular/compiler-cli": "^17.2.3",
+    "@types/jasmine": "^5.1.4",
+    "@types/lodash": "^4.14.202",
+    "jasmine-core": "^5.1.2",
+    "typescript": "~5.2.2"
+  }
+}

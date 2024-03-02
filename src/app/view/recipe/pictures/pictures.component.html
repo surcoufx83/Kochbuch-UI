@@ -1,0 +1,91 @@
+<div class="container px-0 mb-4" *ngIf="recipe != undefined">
+    <a name="gallery-anchor" id="gallery-anchor"></a>
+    <div class="d-flex align-items-center justify-content-between mb-1">
+        <app-h5 [title]="l10n.locale.views.recipe.pictures.title"></app-h5>
+        <div>
+            <button type="button" class="btn btn-sm btn-medium-green text-nowrap ms-2 mb-2"
+                (click)="uploadFileInput.click()" [disabled]="busy">
+                <app-icon [icon]="busy ? spinnerIcon : pictureUploadIcon" [marginEnd]="1"></app-icon>
+                {{ l10n.locale.views.recipe.pictureUpload.uploadBtnText }}
+            </button>
+            <input class="d-none" type="file" #uploadFileInput (change)="onChangeFile($event)"
+                [accept]="acceptMimeTypes" multiple>
+        </div>
+    </div>
+    <div id="recipe-picture-gallery" class="carousel slide" data-bs-ride="carousel" data-bs-interval="9999999">
+        <div class="carousel-inner rounded border" #carousel>
+            <div *ngFor="let picture of recipe.pictures; let i = index"
+                [ngClass]="{ 'carousel-item': true, 'active': i == 0 }">
+                <div class="d-flex justify-content-center align-items-center">
+                    <img [src]="picture.thumbnail" class="w-100" alt="Uploaded picture">
+                </div>
+                <div class="carousel-caption d-none d-md-block rounded" *ngIf="picture.description != ''">
+                    <h5 class="mb-0">{{picture.description}}</h5>
+                </div>
+                <div class="position-indicator position-absolute top-0 start-0 fs-8 user-select-none">
+                    {{ln(picture.uploader != null ? l10n.locale.views.recipe.pictures.picturePositionIndicator :
+                    l10n.locale.views.recipe.pictures.picturePositionIndicatorNoUser, [i + 1, recipe.pictures.length,
+                    (picture.uploader != null && picture.uploader.meta.fn != '' ? picture.uploader.meta.fn :
+                    picture.uploader?.name)])}}
+                    <ng-container *ngIf="isAdmin || isOwner || userId === picture.uploader?.id">
+                        <span class="mx-1"> • </span>
+                        <a [routerLink]="" class="cursor-pointer"
+                            (click)="prepareDelete(picture)">{{l10n.locale.views.recipe.pictures.delete.deleteLinkTitle}}</a>
+                        <button class="d-none" #modalopener data-bs-toggle="modal"
+                            data-bs-target="#delete-picture-modal"></button>
+                    </ng-container>
+                </div>
+            </div>
+        </div>
+        <button class="carousel-control-prev user-select-none" type="button" data-bs-target="#recipe-picture-gallery"
+            data-bs-slide="prev" *ngIf="recipe.pictures.length > 1">
+            <span class="carousel-control-prev-icon text-dark-blue" aria-hidden="true">
+                <app-icon icon="fas fa-angle-left"></app-icon>
+            </span>
+            <span class="visually-hidden">{{l10n.locale.views.recipe.pictures.previousPictureTitle}}</span>
+        </button>
+        <button class="carousel-control-next user-select-none" type="button" data-bs-target="#recipe-picture-gallery"
+            data-bs-slide="next" *ngIf="recipe.pictures.length > 1" #carouselnext>
+            <span class="carousel-control-next-icon text-dark-blue" aria-hidden="true">
+                <app-icon icon="fas fa-angle-right"></app-icon>
+            </span>
+            <span class="visually-hidden">{{l10n.locale.views.recipe.pictures.nextPictureTitle}}</span>
+        </button>
+    </div>
+</div>
+
+<div class="modal fade" tabindex="-1" id="delete-picture-modal" [attr.data-bs-backdrop]="busy ? 'static' : true"
+    [attr.data-bs-keyboard]="busy ? false : true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">
+                    {{ l10n.locale.views.recipe.pictures.delete.modalTitle }}
+                    <div class="spinner-border text-danger spinner-border-sm ms-1" *ngIf="busy" role="status"
+                        aria-hidden="true">
+                    </div>
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" [disabled]="busy"
+                    #closeDeletionBtn></button>
+            </div>
+            <div class="modal-body">
+                <p>
+                    {{ l10n.locale.views.recipe.pictures.delete.modalDescription }}
+                </p>
+            </div>
+            <div *ngIf="deletionSaveError"
+                class="modal-body modal-body-danger text-danger border-start border-end border-danger border-3">
+                {{ l10n.locale.views.recipe.pictures.delete.submitError }}
+            </div>
+            <div class="modal-footer justify-content-between">
+                <button type="button" class="btn btn-sm btn-unselected" data-bs-toggle="modal"
+                    data-bs-target="#delete-picture-modal" #dismissDeletionBtn [disabled]="busy">
+                    {{ l10n.locale.views.recipe.pictures.delete.modalBackBtn }}
+                </button>
+                <button type="submit" class="btn btn-sm btn-danger me-2" [disabled]="busy" (click)="onDeletePicture()">
+                    {{ l10n.locale.views.recipe.pictures.delete.modalSubmitBtn }}
+                </button>
+            </div>
+        </div>
+    </div>
+</div>

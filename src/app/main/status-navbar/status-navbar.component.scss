@@ -1,0 +1,12 @@
+nav.navbar {
+  position: absolute;
+  right: 0;
+  top: 60px;
+  width: 100%;
+}
+
+@media (min-width: 992px) {
+  nav.navbar {
+    width: calc(100% - 240px) !important;
+  }
+}

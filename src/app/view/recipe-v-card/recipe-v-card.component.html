@@ -1,0 +1,26 @@
+<div class="card m-2 mt-0">
+    <img [src]="recipe.pictures[0].thumbnail" class="card-img-top" alt=""
+        *ngIf="recipe.pictures[0] && recipe.pictures[0].thumbnail != '/pictures/_dummy.jpg'">
+    <div class="card-body text-center">
+        <h4 class="card-title overflow-hidden">{{ recipe.name }}</h4>
+        <p class="text-muted mb-0" *ngIf="recipe.description != ''">{{recipe.description}}</p>
+        <p class="text-muted" *ngIf="!hideOwner && recipe.owner">{{ln(l10n.locale.views.recipe.writtenBy,
+            [recipe.owner.meta.fn != '' ? recipe.owner.meta.fn : recipe.owner.name])}}</p>
+        <app-recipe-card-categories *ngIf="showCategories && categories.length > 0"
+            [categories]="categories"></app-recipe-card-categories>
+        <p class="text-muted fs-7">
+            <ng-container *ngIf="recipe.socials.views > 0"><span><app-icon [icon]="eyeIcon"
+                        [marginEnd]="1"></app-icon>{{recipe.socials.views}}</span></ng-container><ng-container
+                *ngIf="recipe.socials.voting.avg != null"><span class="mx-1"> • </span><span><app-icon [icon]="voteIcon"
+                        [marginEnd]="1"></app-icon> {{dec(recipe.socials.voting.avg, 1,
+                    1)}}</span></ng-container><ng-container
+                *ngIf="recipe.socials.views > 0 || recipe.socials.voting.avg != null"><span class="mx-1"> •
+                </span></ng-container><span><app-icon [icon]="calendarIcon" [marginEnd]="1"></app-icon>
+                {{date(recipe.created, 'PP')}}</span>
+        </p>
+    </div>
+    <div class="card-footer text-center">
+        <a [routerLink]="['/recipe', recipe.id + '-' + urlenc(recipe.name)]" class="stretched-link"
+            [title]="ln(l10n.locale.views.recipe.card.cardsRecipeLinkTitle, [recipe.name, recipe.owner?.name])">{{l10n.locale.views.recipe.card.cardsRecipeLink}}</a>
+    </div>
+</div>

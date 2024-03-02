@@ -1,0 +1,110 @@
+<div class="container px-0" *ngIf="recipe != undefined">
+    <hr class="mt-2 mb-4 d-block d-lg-none" />
+    <ng-component *ngTemplateOutlet="introText1"></ng-component>
+    <ng-component *ngTemplateOutlet="introText2"></ng-component>
+    <ng-component *ngTemplateOutlet="introOrigin"></ng-component>
+    <ng-component *ngTemplateOutlet="introAuthor"></ng-component>
+</div>
+
+<ng-template #introText1>
+    <app-h5 [title]="l10n.locale.views.recipe.intro.title"></app-h5>
+    <span
+        *ngIf="isOwner && (recipe!.socials.sharing.publication.isPublished.internal || recipe!.socials.sharing.publication.isPublished.external)">
+        {{ln(l10n.locale.views.recipe.intro.textIntro1CreatedSelfAndPublished,
+        [recipe!.name, date(recipe!.created, 'PPP'), date(recipe!.socials.sharing.publication.when!, 'PPP')])}}
+    </span>
+    <span
+        *ngIf="isOwner && !(recipe!.socials.sharing.publication.isPublished.internal || recipe!.socials.sharing.publication.isPublished.external)">
+        {{ln(l10n.locale.views.recipe.intro.textIntro2CreatedSelfAndHidden,
+        [recipe!.name, date(recipe!.created, 'PPP')])}}
+        <ng-container *ngIf="recipe!.socials.sharing.links.length > 0">
+            {{ln(l10n.locale.views.recipe.intro.textIntro3HiddenShared,
+            [recipe!.socials.sharing.links.length])}}
+        </ng-container>
+    </span>
+    <span
+        *ngIf="!isOwner && (recipe!.socials.sharing.publication.isPublished.internal || recipe!.socials.sharing.publication.isPublished.external) && recipe!.owner != null">
+        {{ln(l10n.locale.views.recipe.intro.textIntro1CreatedOtherPart1Published,
+        [recipe!.name])}}
+        <a
+            [routerLink]="['/recipes', 'user', recipe!.owner.id + '-' + urlenc(recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn : recipe!.owner.name)]"><app-icon
+                [icon]="userIcon" [marginEnd]="1"></app-icon> {{recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn :
+            recipe!.owner.name}}</a>
+        {{ln(l10n.locale.views.recipe.intro.textIntro1CreatedOtherPart2Published,
+        [date(recipe!.socials.sharing.publication.when!, 'PPP')])}}
+    </span>
+    <span
+        *ngIf="!isOwner && !(recipe!.socials.sharing.publication.isPublished.internal || recipe!.socials.sharing.publication.isPublished.external) && recipe!.owner != null">
+        {{ln(l10n.locale.views.recipe.intro.textIntro1CreatedOtherPart1Hidden,
+        [recipe!.name])}}
+        <a
+            [routerLink]="['/recipes', 'user', recipe!.owner.id + '-' + urlenc(recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn : recipe!.owner.name)]"><app-icon
+                [icon]="userIcon" [marginEnd]="1"></app-icon> {{recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn :
+            recipe!.owner.name}}</a>
+        {{ln(l10n.locale.views.recipe.intro.textIntro1CreatedOtherPart2Hidden,
+        [date(recipe!.created, 'PPP')])}}
+    </span>
+    <!-- <span *ngIf="recipe?.aigenerated" class="text-dark-green">{{
+        l10n.locale.views.recipe.intro.textIntroAiGeneratedContent }}</span> -->
+</ng-template>
+
+<ng-template #introText2>
+    <span *ngIf="recipe!.socials.cooked == 0 && recipe!.socials.voting.votes == 0">
+        {{ln(l10n.locale.views.recipe.intro.textIntro4NotCookedNotVoted, [])}}
+    </span>
+    <span *ngIf="recipe!.socials.cooked > 0 && recipe!.socials.voting.votes == 0">
+        {{ln(l10n.locale.views.recipe.intro.textIntro4CookedNotVoted, [recipe!.socials.cooked])}}
+    </span>
+    <span *ngIf="recipe!.socials.cooked == 0 && recipe!.socials.voting.votes > 0">
+        {{ln(l10n.locale.views.recipe.intro.textIntro4NotCookedVoted, [dec(recipe!.socials.voting.avg!, 1, 1)])}}
+    </span>
+    <span *ngIf="recipe!.socials.cooked > 0 && recipe!.socials.voting.votes > 0">
+        {{ln(l10n.locale.views.recipe.intro.textIntro4CookedVoted, [recipe!.socials.cooked,
+        dec(recipe!.socials.voting.avg!, 1, 1)])}}
+    </span>
+</ng-template>
+
+<ng-template #introOrigin>
+    <ng-container *ngIf="recipe!.source.description != '' || recipe!.source.url != ''">
+        <div class="mt-2">
+            <span class="fw-bold">{{l10n.locale.views.recipe.intro.textIntroSource}}: </span>
+            <a *ngIf="recipe!.source.url != ''" [href]="recipe!.source.url" target="_blank">{{
+                recipe!.source.description != '' ? recipe!.source.description : recipe!.source.url }}</a>
+            <span *ngIf="recipe!.source.url == ''">{{recipe!.source.description}}</span>
+        </div>
+    </ng-container>
+</ng-template>
+
+<ng-template #introAuthor>
+    <ng-container
+        *ngIf="recipe!.owner != null && (user != undefined ? recipe!.owner.statistics.recipes.created : recipe!.owner.statistics.recipes.createdext) > 1 && !isOwner">
+        <div class="mt-4">
+            <app-h5
+                [title]="ln(l10n.locale.views.recipe.author.title, [recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn : recipe!.owner.name])"></app-h5>
+        </div>
+        <div class="d-flex justify-content-between align-items-center">
+            <div>
+                <span class="text-muted fs-7"
+                    *ngIf="(user != undefined ? recipe!.owner.statistics.recipes.created : recipe!.owner.statistics.recipes.createdext) == 2">
+                    {{ln(l10n.locale.views.recipe.author.descriptionSn, [recipe!.owner.meta.fn != '' ?
+                    recipe!.owner.meta.fn : recipe!.owner.name])}}
+                </span>
+                <span class="text-muted fs-7"
+                    *ngIf="(user != undefined ? recipe!.owner.statistics.recipes.created : recipe!.owner.statistics.recipes.createdext) != 2">
+                    {{ln(l10n.locale.views.recipe.author.descriptionPl, [recipe!.owner.meta.fn != '' ?
+                    recipe!.owner.meta.fn : recipe!.owner.name,
+                    (user != undefined ? recipe!.owner.statistics.recipes.created :
+                    recipe!.owner.statistics.recipes.createdext)-1])}}
+                </span>
+            </div>
+            <a [routerLink]="['/recipes', 'user', recipe!.owner.id + '-' + urlenc(recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn : recipe!.owner.name)]"
+                class="float-end ms-2">
+                <button type="button" class="btn btn-sm btn-medium-green text-nowrap">
+                    <app-icon [icon]="collectionIcon" [marginEnd]="1"></app-icon>
+                    {{ln(l10n.locale.views.recipe.author.btnText, [recipe!.owner.meta.fn != '' ? recipe!.owner.meta.fn :
+                    recipe!.owner.name])}}
+                </button>
+            </a>
+        </div>
+    </ng-container>
+</ng-template>

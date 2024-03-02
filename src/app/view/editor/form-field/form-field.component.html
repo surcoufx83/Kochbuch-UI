@@ -1,0 +1,8 @@
+<div class="mb-3">
+    <label [for]="'form-field--' + id" [ngClass]="{ 'form-label fw-bold': true, 'required': required }">
+        <ng-content></ng-content>
+    </label>
+    <input type="text" class="form-control" [ngStyle]="{ 'max-width': maxWidth }" [name]="'form-field--' + id"
+        [id]="'form-field--' + id" autocomplete="off" [placeholder]="placholder" [(ngModel)]="value"
+        [required]="required" (change)="valueChange.emit(value)">
+</div>

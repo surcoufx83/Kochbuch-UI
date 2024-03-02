@@ -1,0 +1,115 @@
+<header>
+    <form (submit)="onRunSearch()" autocomplete="off">
+        <nav class="navbar fixed-top navbar-expand-lg navbar-dark bg-dark-blue shadow flex-row align-items-center py-0"
+            id="navbar-main">
+            <div class="container-fluid flex-nowrap">
+                <a class="navbar-brand text-light my-2 overflow-hidden" [routerLink]="'/'"
+                    (click)="showSearchModal = false; searchPhrase = ''">
+                    <img src="/assets/kochbuch-inverted-bordered-192x192.png" style="transform: translateY(-3px);"
+                        width="34" heigh="34" class="me-1" />
+                    <span class="d-none d-md-inline">{{title}}</span>
+                </a>
+                <div class="d-flex flex-row justify-content-end flex-grow-1 align-items-center">
+                    <div class="d-block d-lg-none flex-fill me-2">
+                        <input type="search" name="mobile-search" class="form-control mobile-search input-dark-blue"
+                            (focus)="searchMobileGotFocus = true; searchPhrase != '' ? onChangeSearchText('focus') : null"
+                            (blur)="searchMobileGotFocus = false" (input)="onChangeSearchText('input')"
+                            [placeholder]="l10n.locale.navbar.searchInputPlaceholder" [(ngModel)]="searchPhrase">
+                    </div>
+                    <button *ngIf="loggedin" class="navbar-toggler border-0" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#navbar-content" aria-controls="navbar-content" aria-expanded="false"
+                        aria-label="Toggle navigation" #toggleButton id="navbar-collapse-toggle">
+                        <app-icon [icon]="barsIcon" style="color:white;"></app-icon>
+                    </button>
+                    <button *ngIf="!loggedin" class="btn btn btn-dark-blue d-lg-none" type="button"
+                        (click)="onStartLogin()" [disabled]="busy">
+                        <app-icon *ngIf="busy" [icon]="spinnerIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.navbar.loginLink}}
+                    </button>
+                </div>
+                <input type="submit" class="d-none">
+            </div>
+            <div class="collapse navbar-collapse justify-content-end" id="navbar-content">
+                <div class="d-none d-lg-block">
+                    <div class="container-fluid">
+                        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                            <li class="nav-item me-3">
+                                <input type="search" name="desktop-search"
+                                    class="form-control desktop-search input-dark-blue"
+                                    (focus)="searchDesktopGotFocus = true"
+                                    (blur)="searchDesktopGotFocus = (searchPhrase != '')"
+                                    (input)="onChangeSearchText('input')"
+                                    [ngStyle]="{ width: searchDesktopGotFocus ? '860px' : '430px' }"
+                                    [placeholder]="l10n.locale.navbar.searchInputPlaceholder"
+                                    [(ngModel)]="searchPhrase">
+                            </li>
+                            <ng-container [ngTemplateOutlet]="navbarNoUser" *ngIf="!loggedin"></ng-container>
+                            <ng-container [ngTemplateOutlet]="navbarWithUser" *ngIf="loggedin"></ng-container>
+                        </ul>
+                    </div>
+                </div>
+                <div class="d-flex flex-row d-lg-none justify-content-between py-3">
+                    <div class="container-fluid">
+                        <div class="d-flex flex-column">
+                            <ng-container [ngTemplateOutlet]="navbarMobile"></ng-container>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    </form>
+</header>
+
+<ng-template #navbarNoUser>
+    <li class="nav-item">
+        <button class="btn btn btn-dark-blue text-nowrap" type="button" (click)="onStartLogin()"
+            [disabled]="busy"><app-icon *ngIf="!busy" [icon]="cloudIcon" [marginEnd]="1"></app-icon><app-icon
+                *ngIf="busy" [icon]="spinnerIcon" [marginEnd]="1"></app-icon>{{l10n.locale.navbar.loginLink}}</button>
+    </li>
+</ng-template>
+
+<ng-template #navbarWithUser>
+    <li class="nav-item">
+        <div class="dropdown">
+            <button class="btn btn btn-dark-blue dropdown-toggle" type="button" data-bs-toggle="dropdown"
+                aria-expanded="false">
+                <app-icon [icon]="userIcon" [marginEnd]="1"></app-icon>
+                {{ user!.name }}
+            </button>
+            <ul class="dropdown-menu dropdown-menu-end dropdown-menu-light-blue rounded-0 shadow-lg">
+                <li>
+                    <a class="dropdown-item" [routerLink]="['/logout']">
+                        <app-icon [icon]="logoutIcon" [marginEnd]="1"></app-icon>
+                        {{l10n.locale.navbar.logoutLink}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </li>
+</ng-template>
+
+<ng-template #navbarMobile>
+    <a [routerLink]="['/']" class="p-1 my-2 text-light" (click)="onClickMobileLink()">
+        <app-icon [icon]="appIcon" [marginEnd]="1"></app-icon>
+        {{l10n.locale.sidebar.home}}
+    </a>
+    <a *ngIf="loggedin" [routerLink]="['/recipe/new']" class="p-1 my-2 text-light" (click)="onClickMobileLink()">
+        <app-icon [icon]="newIcon" [marginEnd]="1"></app-icon>
+        {{l10n.locale.sidebar.newRecipe}}
+    </a>
+    <a *ngIf="loggedin" [routerLink]="['/recipe/ai-scanner']" class="p-1 my-2 text-light" (click)="onClickMobileLink()">
+        <app-icon [icon]="aiIcon" [marginEnd]="1"></app-icon>
+        {{l10n.locale.sidebar.aiEditor}}
+    </a>
+    <a *ngIf="loggedin" [routerLink]="['/recipes/my']" class="p-1 my-2 text-light" (click)="onClickMobileLink()">
+        <app-icon [icon]="myRecipesIcon" [marginEnd]="1"></app-icon>
+        {{l10n.locale.sidebar.myRecipes}}
+    </a>
+    <a *ngIf="loggedin" [routerLink]="['/logout']" class="p-1 my-2 text-light" (click)="onClickMobileLink()">
+        <app-icon [icon]="logoutIcon" [marginEnd]="1"></app-icon>
+        {{l10n.locale.navbar.logoutLink}}
+    </a>
+</ng-template>
+
+<app-modern-search #searchTooltip [ngClass]="{ open: showSearchModal }"
+    (onLeaveSearch)="showSearchModal = false"></app-modern-search>

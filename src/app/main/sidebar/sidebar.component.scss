@@ -1,0 +1,31 @@
+.sidebar-outlet {
+    overflow: visible;
+
+    >.sidebar {
+        width: 240px;
+
+        nav>ul.sidebar-nav {
+            padding-left: 0;
+            list-style: none;
+
+            >li {
+                white-space: nowrap;
+
+                >a,
+                span {
+                    align-items: center;
+                    display: flex;
+                    padding: .6rem .8rem;
+                    text-decoration: none;
+                    width: 100%;
+                }
+
+            }
+        }
+
+        .sidebar-footer {
+            color: #BFC4BF;
+            font-size: 80%;
+        }
+    }
+}

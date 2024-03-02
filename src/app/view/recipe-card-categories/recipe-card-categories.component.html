@@ -1,0 +1,10 @@
+<div class="mb-2">
+    <div class="badge category-badge bg-dark-green mx-1" *ngFor="let cat of categories">
+        <app-icon [icon]="cat.item.icon" *ngIf="cat.item.icon != ''; else noicon" [marginEnd]="1" [fixedWidth]="false"></app-icon>
+        {{ cat.item.l10nname }}
+    </div>
+</div>
+
+<ng-template #noicon>
+    <app-icon [icon]="'fas fa-tag'" [marginEnd]="1" [fixedWidth]="false"></app-icon>
+</ng-template>

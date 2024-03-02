@@ -1,0 +1,14 @@
+{
+    "/api": {
+        "target": "https://dev.kochbuch.mogul.network/",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    },
+    "/pictures": {
+        "target": "https://dev.kochbuch.mogul.network/",
+        "secure": true,
+        "changeOrigin": true,
+        "logLevel": "debug"
+    }
+}

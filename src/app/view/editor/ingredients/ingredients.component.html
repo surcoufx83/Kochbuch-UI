@@ -1,0 +1,62 @@
+<table border="0" class="w-100">
+    <thead *ngIf="showDescriptions">
+        <tr>
+            <th *ngIf="sortOn"></th>
+            <th>{{l10n.locale.views.editor.fields.ingredientQuantity.title}}</th>
+            <th>{{l10n.locale.views.editor.fields.ingredientUnit.title}}</th>
+            <th>{{l10n.locale.views.editor.fields.ingredientDescription.title}}</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td class="text-muted" *ngIf="sortOn"></td>
+            <td class="text-muted">{{l10n.locale.views.editor.fields.ingredientQuantity.description}}</td>
+            <td class="text-muted">{{l10n.locale.views.editor.fields.ingredientUnit.description}}</td>
+            <td class="text-muted">{{l10n.locale.views.editor.fields.ingredientDescription.description}}</td>
+            <td class="text-muted"></td>
+        </tr>
+    </thead>
+    <tbody [ngClass]="{ 'ingredients': true }">
+        <ng-container *ngFor="let item of listing; let i = index">
+            <tr>
+                <td class="pe-2 pb-2" *ngIf="sortOn">
+                    <button type="button" *ngIf="i < listing.length - 1" class="btn btn-medium-green"
+                        (click)="move(i, i + 1)" tabindex="-1">
+                        <app-icon [icon]="sortDownIcon"></app-icon>
+                    </button>
+                </td>
+                <td class="pe-2 pb-2">
+                    <input type="number" class="form-control" [name]="id + '-ingredient-quantity-' + i"
+                        [id]="id + '-ingredient-quantity-' + i" autocomplete="off" style="min-width: 70px;" [min]="0"
+                        [step]="0.0000001"
+                        [placeholder]="l10n.locale.views.editor.fields.ingredientQuantity.placeholder"
+                        [(ngModel)]="listing[i].quantity" (change)="listingChange.emit(listing)">
+                </td>
+                <td class="pe-2 pb-2">
+                    <input type="text" class="form-control" [name]="id + '-ingredient-unitname-' + i"
+                        [id]="id + '-ingredient-unitname-' + i" autocomplete="off" style="min-width: 70px;"
+                        [placeholder]="l10n.locale.views.editor.fields.ingredientUnit.placeholder"
+                        [(ngModel)]="listing[i].unit.name" (change)="listingChange.emit(listing)">
+                </td>
+                <td class="pe-2 pb-2" style="width: 80%">
+                    <input type="text" class="form-control" [name]="id + '-ingredient-description-' + i"
+                        [id]="id + '-ingredient-description-' + i" autocomplete="off" style="width: 100%;"
+                        [placeholder]="l10n.locale.views.editor.fields.ingredientDescription.placeholder"
+                        [(ngModel)]="listing[i].description" (change)="listingChange.emit(listing)">
+                </td>
+                <td class="pb-2">
+                    <button type="button" *ngIf="!sortOn" class="btn btn-outline-danger" (click)="removeAt(i)"
+                        tabindex="-1" [disabled]="i == 0 && scope == 'Recipe'">
+                        <app-icon [icon]="deleteIcon"></app-icon>
+                    </button>
+                    <button type="button" *ngIf="sortOn && i > 0" class="btn btn-medium-green" (click)="move(i, i - 1)"
+                        tabindex="-1">
+                        <app-icon [icon]="sortUpIcon"></app-icon>
+                    </button>
+                </td>
+            </tr>
+        </ng-container>
+    </tbody>
+</table>
+
+<app-editor-add-btn (btnClicked)="add()"
+    [title]="l10n.locale.views.editor.groups.ingredientAddBtnText"></app-editor-add-btn>

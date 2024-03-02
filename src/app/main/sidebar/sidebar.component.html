@@ -1,0 +1,46 @@
+<div class="sidebar-outlet h-100">
+    <div class="sidebar h-100 shadow">
+        <div class="d-flex flex-column h-100">
+            <div class="flex-fill overflow-auto">
+                <nav>
+                    <ul class="sidebar-nav">
+                        <li>
+                            <a [routerLink]="['/']">
+                                <app-icon [icon]="appIcon" [marginEnd]="2"></app-icon>
+                                {{l10n.locale.sidebar.home}}
+                            </a>
+                        </li>
+                        <li *ngIf="loggedin">
+                            <a [routerLink]="['/recipe/new']">
+                                <app-icon [icon]="newIcon" [marginEnd]="2"></app-icon>
+                                {{l10n.locale.sidebar.newRecipe}}
+                            </a>
+                        </li>
+                        <li *ngIf="loggedin && user">
+                            <a [routerLink]="['/recipe/ai-scanner']">
+                                <app-icon [icon]="aiIcon" [marginEnd]="2"></app-icon>
+                                {{l10n.locale.sidebar.aiEditor}}
+                            </a>
+                        </li>
+                        <li *ngIf="loggedin">
+                            <a [routerLink]="['/recipes/my']">
+                                <app-icon [icon]="myRecipesIcon" [marginEnd]="2"></app-icon>
+                                {{l10n.locale.sidebar.myRecipes}}
+                            </a>
+                        </li>
+                        <li *ngIf="loggedin">
+                            <span class="justify-content-between" role="button" (click)="loadRandomRecipe()">
+                                <div>
+                                    <app-icon [icon]="randomRecipeIcon" [marginEnd]="2"></app-icon>
+                                    {{l10n.locale.sidebar.randomRecipe}}
+                                </div>
+                                <div class="spinner-border text-light-green spinner-border-sm ms-auto"
+                                    *ngIf="loadingRandom" role="status" aria-hidden="true"></div>
+                            </span>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+</div>

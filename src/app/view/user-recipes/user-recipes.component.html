@@ -1,0 +1,46 @@
+<div class="container">
+    <app-h3 [title]="ln(l10n.locale.views.userrecipes.title, [user?.meta?.fn ?? userName])" [busy]="loading"></app-h3>
+    <ng-container *ngIf="loaded">
+        <p *ngIf="recipes.count === 0">
+            {{ ln(l10n.locale.views.userrecipes.descriptionNoRecipes, [user?.meta?.fn ?? userName]) }}
+        </p>
+        <p *ngIf="recipes.count > 0">
+            {{ recipes.count === 1 ?
+            ln(l10n.locale.views.userrecipes.descriptionWithRecipesSn, [user?.meta?.fn ?? userName]) :
+            ln(l10n.locale.views.userrecipes.descriptionWithRecipesPl, [user?.meta?.fn ?? userName, recipes.count])}}
+        </p>
+    </ng-container>
+</div>
+
+<div class="container">
+    <div class="row p-0">
+        <div class="col col-12 col-md-6 col-xl-3 p-0">
+            <ng-container *ngFor="let recipeitem of recipes.list; let i = index">
+                <ng-container *ngIf="i % 4 === 0">
+                    <app-recipe-v-card [recipe]="recipeitem" [hideOwner]="true"></app-recipe-v-card>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="col col-12 col-md-6 col-xl-3 p-0">
+            <ng-container *ngFor="let recipeitem of recipes.list; let i = index">
+                <ng-container *ngIf="i % 4 === 1">
+                    <app-recipe-v-card [recipe]="recipeitem" [hideOwner]="true"></app-recipe-v-card>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="col col-12 col-md-6 col-xl-3 p-0">
+            <ng-container *ngFor="let recipeitem of recipes.list; let i = index">
+                <ng-container *ngIf="i % 4 === 2">
+                    <app-recipe-v-card [recipe]="recipeitem" [hideOwner]="true"></app-recipe-v-card>
+                </ng-container>
+            </ng-container>
+        </div>
+        <div class="col col-12 col-md-6 col-xl-3 p-0">
+            <ng-container *ngFor="let recipeitem of recipes.list; let i = index">
+                <ng-container *ngIf="i % 4 === 3">
+                    <app-recipe-v-card [recipe]="recipeitem" [hideOwner]="true"></app-recipe-v-card>
+                </ng-container>
+            </ng-container>
+        </div>
+    </div>
+</div>

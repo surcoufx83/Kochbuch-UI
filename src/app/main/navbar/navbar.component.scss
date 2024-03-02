@@ -1,0 +1,7 @@
+input.mobile-search, input.desktop-search {
+  transition: border-color 0.15s ease-in-out, box-shadow 0.15s ease-in-out, width .15s ease-in-out!important;
+}
+
+a.navbar-brand {
+    transition: width .15s ease-in-out;
+}

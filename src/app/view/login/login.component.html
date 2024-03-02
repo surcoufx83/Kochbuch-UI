@@ -1,0 +1,20 @@
+<div class="row">
+    <div class="col col-12 col-md-8 col-lg-6">
+        <h3 class="fw-bold">{{l10n.locale.views.login.title}}</h3>
+        <p>{{waitForBackend ? l10n.locale.views.login.afterAuthDescription : l10n.locale.views.login.description}}</p>
+        <div class="my-3" *ngIf="loginFailed">
+            <div class="alert alert-danger">
+                <app-icon [icon]="attentionIcon" [marginEnd]="1"></app-icon>
+                {{l10n.locale.views.login.failedMessage}}
+            </div>
+        </div>
+        <div class="py-2">
+            <button class="btn btn-dark-blue" type="button" (click)="startLogin()" [disabled]="busy || waitForBackend">
+                <app-icon *ngIf="!busy && !waitForBackend" [icon]="cloudIcon" [marginEnd]="1"></app-icon>
+                <app-icon *ngIf="busy || waitForBackend" [icon]="spinnerIcon" [marginEnd]="1"></app-icon>
+                {{waitForBackend ? l10n.locale.views.login.afterAuthButtonText :
+                l10n.locale.views.login.nextcloudButtonText}}
+            </button>
+        </div>
+    </div>
+</div>
